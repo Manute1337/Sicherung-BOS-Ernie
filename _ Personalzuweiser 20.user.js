@@ -1,17 +1,18 @@
 // ==UserScript==
 // @name        * Personalzuweiser 2.0
 // @namespace   bos-ernie.leitstellenspiel.de
-// @version     2.6.0
+// @version     2.6.1
 // @license     BSD-3-Clause
 // @author      BOS-Ernie
+// @author      Manute1337
 // @description Weist benötigtes Personal einem Fahrzeug zu.
 // @match       https://*.leitstellenspiel.de/vehicles/*/zuweisung
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=leitstellenspiel.de
 // @run-at      document-idle
 // @grant       none
 // @resource    https://forum.leitstellenspiel.de/index.php?thread/27234-script-personalzuweiser-2-0/
-// @downloadURL https://update.greasyfork.org/scripts/513708/%2A%20Personalzuweiser%2020.user.js
-// @updateURL https://update.greasyfork.org/scripts/513708/%2A%20Personalzuweiser%2020.meta.js
+
+
 // ==/UserScript==
 
 /* global $, I18n */
@@ -218,9 +219,12 @@
       numberOfPersonnelToAssign -= await assignPersonnel(training.key, training.number);
     }
 
-    if (numberOfPersonnelToAssign > 0) {
-      await assignPersonnel(null, numberOfPersonnelToAssign);
-    }
+if (numberOfPersonnelToAssign > 0) {
+ // Nur auf ungelernte Personen zurückgreifen, wenn KEIN Lehrgang gefordert ist
+ if (!vehicleConfiguration.training || vehicleConfiguration.training.length === 0) {
+   await assignPersonnel(null, numberOfPersonnelToAssign);
+ }
+}
 
     document.dispatchEvent(new CustomEvent("bos-ernie.personalzuweiser.assign-completed"));
   }
